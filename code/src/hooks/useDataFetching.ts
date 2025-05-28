@@ -11,7 +11,7 @@ export const useDataFetching = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/data");
+        const response = await fetch("http://localhost:5800/api/data");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }

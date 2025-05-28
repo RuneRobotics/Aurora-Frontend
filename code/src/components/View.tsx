@@ -31,7 +31,7 @@ const View: React.FC<ViewProps> = () => {
           }}
         >
           <img
-            src={`/api/stream_${tab}`}
+            src={`http://localhost:5800/api/stream_${tab}`}
             alt="could not fetch"
             style={{ borderRadius: '8px', maxWidth: '100%', maxHeight: '100%' }}
           />
