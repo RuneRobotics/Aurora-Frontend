@@ -9,7 +9,7 @@ const Lighting: React.FC = () => {
   });
 
   const handleLightingChange = (key: 'exposure' | 'brightness') => (
-    event: Event,
+    _event: Event,
     newValue: number | number[]
   ) => {
     setLightingState((prevState) => ({

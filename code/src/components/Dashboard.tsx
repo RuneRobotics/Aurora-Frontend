@@ -26,7 +26,6 @@ const Dashboard: React.FC = () => {
           {/* Panel - 25% width */}
           <Grid item xs={3} sx={{ height: "100%" }}>
             <Panel>
-              <Typography variant="h6">Panel 1</Typography>
             </Panel>
           </Grid>
 

@@ -2,14 +2,13 @@ import React from 'react';
 import { Paper, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../store';
-import { Mode, Tab } from '../types/state_types';
+import {  Tab } from '../types/state_types';
 
 interface ViewProps {
   children: React.ReactNode;
 }
 
 const View: React.FC<ViewProps> = () => {
-  const mode: Mode = useSelector((state: StoreState) => state.general_slice.mode);
   const tab: Tab = useSelector((state: StoreState) => state.general_slice.tab);
 
   return (
