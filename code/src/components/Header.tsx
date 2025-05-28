@@ -1,30 +1,46 @@
 import React from "react";
-import { Toolbar, Typography, IconButton } from "@mui/material";
-import MapIcon from "@mui/icons-material/Map";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
-import { useDispatch, useSelector } from "react-redux";
-import { StoreState } from "../store";
-import { toggleView } from "../store/LayoutSlice";
-// Use HeaderProps to explicitly type the props in the component
-const Header: React.FC = () => {
-  const dispatch = useDispatch();
-  const view = useSelector((state: StoreState) => state.layout_slice.view);
+import { Toolbar, Typography, IconButton, Box } from "@mui/material";
+import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
+
+interface Props {
+  setOpenDrawer: (open: boolean) => void;
+}
+
+const Header: React.FC<Props> = ({ setOpenDrawer }: Props) => {
   return (
-    <Toolbar sx={{ bgcolor: "background.paper" }}>
-      <Typography
-        variant="h6"
-        component="div"
-        sx={{ flexGrow: 1, color: "common.white" }}
+    <Box
+      sx={{
+        width: "100%",
+        height: "10%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Toolbar
+        sx={{
+          width: "100%",
+          height: "100%",
+          bgcolor: "background.paper",
+          display: "flex",
+          justifyContent: "space-between",
+          px: 2,
+        }}
       >
-        Aurora Dashboard
-      </Typography>
-      <IconButton
-        onClick={() => dispatch(toggleView())}
-        sx={{ color: "common.white" }}
-      >
-        {view === "Field" ? <MapIcon /> : <CameraAltIcon />}
-      </IconButton>
-    </Toolbar>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ color: "common.white" }}
+        >
+          Aurora Dashboard
+        </Typography>
+        <IconButton onClick={() => setOpenDrawer(true)} sx={{ color: "common.white" }}>
+          <MenuOpenRoundedIcon />
+        </IconButton>
+      </Toolbar>
+    </Box>
   );
 };
 

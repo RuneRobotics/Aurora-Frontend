@@ -1,49 +1,42 @@
-import React from "react";
-import { Box, CssBaseline } from "@mui/material";
-import { useSelector } from "react-redux";
-import useResizableSidebar from "../hooks/useResizeableSlider";
+import React, { useState } from "react";
+import { Box, Typography, Grid } from "@mui/material";
 import Header from "./Header";
-import CameraFeed from "./camera_feed/CameraFeed";
+import MyDrawer from "./MyDrawer";
 import { useDataFetching } from "../hooks/useDataFetching";
-import Field from "./field/Field";
-import { StoreState } from "../store";
+import Panel from "./Panel";
+import View from "./View";
 
 const Dashboard: React.FC = () => {
   useDataFetching();
-  const view = useSelector((state: StoreState) => state.layout_slice.view);
-  const {
-    sidebarWidth,
-    isResizing,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-  } = useResizableSidebar(window.innerWidth * 0.25);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        height: "100vh",
-        bgcolor: "background.default",
-        cursor: isResizing ? "col-resize" : "auto",
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
-      <CssBaseline />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          bgcolor: "background.default",
-        }}
-      >
-        <Header />
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* Drawer (outside the layout so it overlays properly) */}
+      <MyDrawer open={openDrawer} setOpen={setOpenDrawer} />
+
+      {/* Header - 10% of the screen */}
+      <Box sx={{ flex: "0 0 10%", mb: 2 }}>
+        <Header setOpenDrawer={setOpenDrawer} />
+      </Box>
+
+      {/* Main Content - 90% of the screen */}
+      <Box sx={{ flex: "1 1 90%", overflow: "hidden" }}>
+        <Grid container spacing={2} sx={{ height: "100%" }}>
+          {/* Panel - 25% width */}
+          <Grid item xs={3} sx={{ height: "100%" }}>
+            <Panel>
+              <Typography variant="h6">Panel 1</Typography>
+            </Panel>
+          </Grid>
+
+          {/* View - 75% width */}
+          <Grid item xs={9} sx={{ height: "100%" }}>
+            <View>
+              <Typography variant="h4">View Area</Typography>
+            </View>
+          </Grid>
+        </Grid>
       </Box>
     </Box>
   );
