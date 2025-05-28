@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import Header from "./Header";
 import MyDrawer from "./MyDrawer";
-import { useDataFetching } from "../hooks/useDataFetching";
+import { useDeviceFetching } from "../hooks/useDeviceFetching";
 import Panel from "./Panel";
 import View from "./View";
+import { useModeFetching } from "../hooks/useModeFetching";
 
 const Dashboard: React.FC = () => {
-  useDataFetching();
+  useDeviceFetching();
+  useModeFetching();
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (

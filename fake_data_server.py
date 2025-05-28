@@ -8,6 +8,14 @@ CORS(app, origins="http://localhost:5173")
 # OpenCV camera setup
 camera = cv2.VideoCapture(0)
 
+# In-memory data stores
+settings_store = {}
+mode_store = {
+    "mode": "Detection",
+    "camera_id": -1
+}
+
+
 @app.route('/api/stream_0')
 def stream_0():
     def generate_frames():
@@ -23,22 +31,10 @@ def stream_0():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/api/data', methods=['GET'])
+@app.route('/api/device', methods=['GET'])
 def get_data():
     data = {
-        "fused_data": {
-            "robot_position": {
-                "pitch": 0,
-                "roll": 0,
-                "x": 5,
-                "y": 2,
-                "yaw": 2,
-                "z": 0
-            },
-            "targets": {
-                "april_tags": []
-            }
-        },
+        "ip": "1-.67.38.19",
         "cameras": [
             {
                 "camera_id": 0,
@@ -71,8 +67,6 @@ def get_data():
     return jsonify(data)
 
 
-settings_store = {}
-
 @app.route('/api/settings_<tab>', methods=['GET', 'POST'])
 def handle_settings(tab):
     if request.method == 'GET':
@@ -96,6 +90,22 @@ def handle_settings(tab):
 
         settings_store[tab] = data
         print(f"Saved settings for tab '{tab}': {data}")
+        return jsonify({"status": "success"}), 200
+
+
+@app.route('/api/mode', methods=['GET', 'POST'])
+def handle_mode():
+    if request.method == 'GET':
+        return jsonify(mode_store)
+
+    elif request.method == 'POST':
+        data = request.get_json()
+        if not data or 'mode' not in data or 'camera_id' not in data:
+            return jsonify({"error": "Missing 'mode' or 'camera_id'"}), 400
+
+        mode_store['mode'] = data['mode']
+        mode_store['camera_id'] = data['camera_id']
+        print(f"Updated mode: {mode_store}")
         return jsonify({"status": "success"}), 200
 
 

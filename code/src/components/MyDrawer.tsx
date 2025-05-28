@@ -9,9 +9,8 @@ import {
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CameraList from "./CameraList";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { StoreState } from "../store";
-import { setTab } from "../store/GeneralSlice";
 
 interface Props {
   open: boolean;
@@ -20,7 +19,29 @@ interface Props {
 
 const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
-  const dispatch = useDispatch();
+  const mode = useSelector((state: StoreState) => state.general_slice.mode);
+
+  const handleHomeClick = async () => {
+    try {
+      const response = await fetch("http://localhost:5800/api/mode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: mode,
+          camera_id: -1,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to post home click:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error posting home click:", error);
+    }
+  };
+
   return (
     <MuiDrawer
       anchor="right"
@@ -43,16 +64,16 @@ const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
           </IconButton>
         </Box>
         <Button
-          onClick={() => dispatch(setTab("Home"))}
-        variant={tab==="Home" ? "contained" : "outlined"}
-        fullWidth
-        sx={{ mb: 1, textAlign: "left" }}
-      >
-        Home
-      </Button>
+          onClick={handleHomeClick}
+          variant={tab === "Home" ? "contained" : "outlined"}
+          fullWidth
+          sx={{ mb: 1, textAlign: "left" }}
+        >
+          Home
+        </Button>
 
-      <Divider sx={{ my: 1 }} /> 
-        <CameraList/>
+        <Divider sx={{ my: 1 }} />
+        <CameraList />
       </Box>
     </MuiDrawer>
   );

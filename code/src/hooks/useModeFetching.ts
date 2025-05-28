@@ -1,21 +1,21 @@
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { Input } from "../types/inputs";
-import { setCameras } from "../store/CoProcessorSlice";
+import { Mode } from "../types/state_types";
+import { setMode, setTab } from "../store/GeneralSlice";
 const FETCH_INTERVAL = 100; // 100ms interval for real-time updates
 
-export const useDataFetching = () => {
+export const useModeFetching = () => {
   const dispatch = useDispatch();
   const previousDataRef = useRef<string | null>(null); // Ref to store the previous JSON string
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5800/api/data");
+        const response = await fetch("http://localhost:5800/api/mode");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const input: Input = await response.json();
+        const input: {mode: Mode, camera_id: number} = await response.json();
 
         // Serialize the fetched data into a string
         const currentDataString = JSON.stringify(input);
@@ -26,7 +26,8 @@ export const useDataFetching = () => {
           previousDataRef.current = currentDataString;
 
           // Dispatch actions only if the data has changed
-          dispatch(setCameras(input.cameras));
+          dispatch(setMode(input.mode));
+          dispatch(setTab(input.camera_id === -1 ? "Home" : input.camera_id));
 
         }
       } catch (error) {

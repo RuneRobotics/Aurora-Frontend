@@ -4,17 +4,37 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { StoreState } from "../store";
 import { UN_DEFINED_IP } from "../types/Constants";
-import { setTab } from "../store/GeneralSlice";
+import { Mode } from "../types/state_types";
 
 const CameraList: React.FC = () => {
   const device = useSelector((state: StoreState) => state.device_slice);
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
-  const dispatch = useDispatch();
+  const mode: Mode = useSelector((state: StoreState) => state.general_slice.mode);
 
-  
+  const handleCameraClick = async (id: number) => {
+    try {
+      const response = await fetch("http://localhost:5800/api/mode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: mode,
+          camera_id: id,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to post camera selection:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error posting camera selection:", error);
+    }
+  };
+
   if (device.ip === UN_DEFINED_IP) {
     return (
       <Box sx={{ p: 2 }}>
@@ -28,9 +48,7 @@ const CameraList: React.FC = () => {
       {device.cameras.map((_camera, index) => (
         <Button
           key={`${device.ip}-camera-${index}`}
-          onClick={() => {
-            dispatch(setTab(index));;
-          }}
+          onClick={() => handleCameraClick(index)}
           variant={tab === index ? "contained" : "outlined"}
           fullWidth
           sx={{ mb: 1, textAlign: "left" }}
