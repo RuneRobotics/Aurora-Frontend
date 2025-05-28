@@ -1,9 +1,29 @@
-from flask import Flask, jsonify
-from flask_cors import CORS  # Import CORS
+from flask import Flask, Response, jsonify
+from flask_cors import CORS
+import cv2
 
 app = Flask(__name__)
-CORS(app, origins="http://localhost:5173")  # Allow requests from port 5173
+CORS(app, origins="http://localhost:5173")
 
+# OpenCV video capture (0 = default camera)
+camera = cv2.VideoCapture(0)
+
+@app.route('/api/stream_0')
+def stream_0():
+    def generate_frames():
+        while True:
+            success, frame = camera.read()
+            if not success:
+                break
+            else:
+                # Encode frame as JPEG
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+    return Response(generate_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
@@ -51,7 +71,6 @@ def get_data():
         ]
     }
     return jsonify(data)
-
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5800, debug=True)

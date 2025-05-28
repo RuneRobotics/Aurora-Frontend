@@ -29,9 +29,9 @@ const CameraList: React.FC = () => {
         <Button
           key={`${device.ip}-camera-${index}`}
           onClick={() => {
-            dispatch(setTab(`Camera_${index+1}`));;
+            dispatch(setTab(index));;
           }}
-          variant={tab === `Camera_${index+1}` ? "contained" : "outlined"}
+          variant={tab === index ? "contained" : "outlined"}
           fullWidth
           sx={{ mb: 1, textAlign: "left" }}
         >

@@ -37,4 +37,4 @@ export interface Layout {
   selectedCamera: CameraState | undefined;
   view: View;
 }
-export type Tab = "Home" | `Camera_${number}`;
+export type Tab = "Home" | number;
