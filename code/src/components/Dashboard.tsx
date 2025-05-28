@@ -3,8 +3,6 @@ import { Box, CssBaseline } from "@mui/material";
 import { useSelector } from "react-redux";
 import useResizableSidebar from "../hooks/useResizeableSlider";
 import Header from "./Header";
-import Sidebar from "./SideBar";
-import ResizeHandle from "./ResizeHandler";
 import CameraFeed from "./camera_feed/CameraFeed";
 import { useDataFetching } from "../hooks/useDataFetching";
 import Field from "./field/Field";
@@ -46,21 +44,7 @@ const Dashboard: React.FC = () => {
         }}
       >
         <Header />
-        <Box
-          sx={{
-            flexGrow: 1,
-            overflow: "hidden",
-            bgcolor: "background.default",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {view === "Field" ? <Field /> : <CameraFeed />}
-        </Box>
       </Box>
-      <ResizeHandle onMouseDown={handleMouseDown} isResizing={isResizing} />
-      <Sidebar width={sidebarWidth} />
     </Box>
   );
 };
