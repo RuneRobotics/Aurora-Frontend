@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Toolbar, Typography } from "@mui/material";
-import DeviceList from "./DeviceList";
+import DeviceList from "./CameraList";
 
 interface SidebarProps {
   width: number;

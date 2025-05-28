@@ -13,6 +13,7 @@ export enum Mode {
   Calibration = "Calibration",
   Detection = "Detection",
   Lighting = "Lighting",
+  Settings = "Settings",
 }
 export interface CalibrationState {
   imageCount: number;
@@ -36,3 +37,4 @@ export interface Layout {
   selectedCamera: CameraState | undefined;
   view: View;
 }
+export type Tab = "Home" | `Camera_${number}`;

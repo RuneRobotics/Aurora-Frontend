@@ -4,8 +4,14 @@ import {
   Box,
   IconButton,
   Typography,
+  Button,
+  Divider,
 } from "@mui/material";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import CameraList from "./CameraList";
+import { useDispatch, useSelector } from "react-redux";
+import { StoreState } from "../store";
+import { setTab } from "../store/GeneralSlice";
 
 interface Props {
   open: boolean;
@@ -13,6 +19,8 @@ interface Props {
 }
 
 const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
+  const tab = useSelector((state: StoreState) => state.general_slice.tab);
+  const dispatch = useDispatch();
   return (
     <MuiDrawer
       anchor="right"
@@ -34,7 +42,17 @@ const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
             <CloseRoundedIcon />
           </IconButton>
         </Box>
-        {/* Add drawer content here */}
+        <Button
+          onClick={() => dispatch(setTab("Home"))}
+        variant={tab==="Home" ? "contained" : "outlined"}
+        fullWidth
+        sx={{ mb: 1, textAlign: "left" }}
+      >
+        Home
+      </Button>
+
+      <Divider sx={{ my: 1 }} /> 
+        <CameraList/>
       </Box>
     </MuiDrawer>
   );

@@ -34,6 +34,19 @@ def get_data():
                 },
                 "targets": {
                     "april_tags": []
+                }},
+                {
+                "camera_id": 1,
+                "camera_position": {
+                    "pitch": 0,
+                    "roll": 0,
+                    "x": 5,
+                    "y": 2,
+                    "yaw": 2,
+                    "z": 0
+                },
+                "targets": {
+                    "april_tags": []
                 }}
         ]
     }

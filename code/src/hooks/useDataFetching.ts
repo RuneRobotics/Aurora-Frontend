@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { Input } from "../types/inputs";
 import { setCameras } from "../store/CoProcessorSlice";
-import { setRobotPosition, setTags } from "../store/FusedDataSlice";
 const FETCH_INTERVAL = 100; // 100ms interval for real-time updates
 
 export const useDataFetching = () => {
@@ -28,8 +27,7 @@ export const useDataFetching = () => {
 
           // Dispatch actions only if the data has changed
           dispatch(setCameras(input.cameras));
-          dispatch(setRobotPosition(input.fused_data.robot_position));
-          dispatch(setTags(input.fused_data.targets.april_tags));
+
         }
       } catch (error) {
         console.error("Error fetching data:", error);
