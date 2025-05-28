@@ -7,7 +7,6 @@ import { StoreState } from '../store';
 import Settings from './Settings';
 import { Mode } from '../types/state_types';
 import Lighting from './Lighting';
-import PreCalibration from './PreCalibration';
 import Calibration from './Calibration';
 
 
