@@ -12,7 +12,6 @@ import { Mode } from "../types/state_types";
 const CameraList: React.FC = () => {
   const device = useSelector((state: StoreState) => state.device_slice);
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
-  const mode: Mode = useSelector((state: StoreState) => state.general_slice.mode);
 
   const handleCameraClick = async (id: number) => {
     try {
@@ -22,7 +21,7 @@ const CameraList: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          mode: mode,
+          mode: Mode.Detection,
           camera_id: id,
         }),
       });

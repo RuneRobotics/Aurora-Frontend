@@ -11,6 +11,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CameraList from "./CameraList";
 import { useSelector } from "react-redux";
 import { StoreState } from "../store";
+import { Mode } from "../types/state_types";
 
 interface Props {
   open: boolean;
@@ -19,7 +20,6 @@ interface Props {
 
 const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
-  const mode = useSelector((state: StoreState) => state.general_slice.mode);
 
   const handleHomeClick = async () => {
     try {
@@ -29,7 +29,7 @@ const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          mode: mode,
+          mode: Mode.Detection,
           camera_id: -1,
         }),
       });

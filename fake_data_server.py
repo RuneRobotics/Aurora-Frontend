@@ -1,3 +1,4 @@
+import random
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
 import cv2
@@ -29,6 +30,25 @@ def stream_0():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/api/detection', methods=['GET'])
+def detection_data():
+    data = {
+        "robot_position": {
+            "pitch": 0,
+            "roll": 0,
+            "x": 5,
+            "y": 2,
+            "yaw": random.uniform(0, 360),
+            "z": 0
+        },
+        "targets": {
+            "april_tags": []
+        }
+    }
+    return jsonify(data)
+
 
 
 @app.route('/api/device', methods=['GET'])

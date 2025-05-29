@@ -3,6 +3,7 @@ import { Paper, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { StoreState } from '../store';
 import {  Tab } from '../types/state_types';
+import Field from './field/Field';
 
 interface ViewProps {
   children: React.ReactNode;
@@ -36,7 +37,7 @@ const View: React.FC<ViewProps> = () => {
             style={{ borderRadius: '8px', maxWidth: '100%', maxHeight: '100%' }}
           />
         </Box>
-      ) : null}
+      ) : <Field/>}
     </Paper>
   );
 };
