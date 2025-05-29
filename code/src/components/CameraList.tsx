@@ -9,7 +9,11 @@ import { StoreState } from "../store";
 import { UN_DEFINED_IP } from "../types/Constants";
 import { Mode } from "../types/state_types";
 
-const CameraList: React.FC = () => {
+interface CameraListProps {
+  setOpen: (open: boolean) => void;
+}
+
+const CameraList: React.FC<CameraListProps> = ({ setOpen }) => {
   const device = useSelector((state: StoreState) => state.device_slice);
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
 
@@ -31,6 +35,8 @@ const CameraList: React.FC = () => {
       }
     } catch (error) {
       console.error("Error posting camera selection:", error);
+    } finally {
+      setOpen(false); // Close the drawer
     }
   };
 

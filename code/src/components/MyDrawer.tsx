@@ -21,26 +21,29 @@ interface Props {
 const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
   const tab = useSelector((state: StoreState) => state.general_slice.tab);
 
-  const handleHomeClick = async () => {
-    try {
-      const response = await fetch("http://localhost:5800/api/mode", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mode: Mode.Detection,
-          camera_id: -1,
-        }),
-      });
+const handleHomeClick = async () => {
+  try {
+    const response = await fetch("http://localhost:5800/api/mode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: Mode.Detection,
+        camera_id: -1,
+      }),
+    });
 
-      if (!response.ok) {
-        console.error("Failed to post home click:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error posting home click:", error);
+    if (!response.ok) {
+      console.error("Failed to post home click:", response.statusText);
     }
-  };
+  } catch (error) {
+    console.error("Error posting home click:", error);
+  } finally {
+    setOpen(false); // Close the drawer regardless of request success/failure
+  }
+};
+
 
   return (
     <MuiDrawer
@@ -73,7 +76,7 @@ const MyDrawer: React.FC<Props> = ({ open, setOpen }) => {
         </Button>
 
         <Divider sx={{ my: 1 }} />
-        <CameraList />
+        <CameraList setOpen={setOpen}/>
       </Box>
     </MuiDrawer>
   );
