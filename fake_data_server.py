@@ -1,13 +1,31 @@
 import random
 from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
+from waitress import serve
+import threading
+import time
 import cv2
 
 app = Flask(__name__)
 CORS(app, origins="http://localhost:5173")
 
-# OpenCV camera setup
+# Camera and threading setup
 camera = cv2.VideoCapture(0)
+frame_lock = threading.Lock()
+latest_frame = None
+
+def camera_reader():
+    global latest_frame
+    while True:
+        success, frame = camera.read()
+        if success:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            with frame_lock:
+                latest_frame = buffer.tobytes()
+        time.sleep(1 / 30)  # Limit to ~30 FPS
+
+# Start camera reading thread
+threading.Thread(target=camera_reader, daemon=True).start()
 
 # In-memory data stores
 settings_store = {}
@@ -16,21 +34,18 @@ mode_store = {
     "camera_id": -1
 }
 
-
 @app.route('/api/stream_0')
 def stream_0():
     def generate_frames():
         while True:
-            success, frame = camera.read()
-            if not success:
-                break
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
+            with frame_lock:
+                if latest_frame is None:
+                    continue
+                frame = latest_frame
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/api/detection', methods=['GET'])
 def detection_data():
@@ -40,7 +55,7 @@ def detection_data():
             "roll": 0,
             "x": 5,
             "y": 2,
-            "yaw": random.uniform(0, 360),
+            "yaw": 2 + 3.14 * 180 / random.randint(1, 180),
             "z": 0
         },
         "targets": {
@@ -48,8 +63,6 @@ def detection_data():
         }
     }
     return jsonify(data)
-
-
 
 @app.route('/api/device', methods=['GET'])
 def get_data():
@@ -86,7 +99,6 @@ def get_data():
     }
     return jsonify(data)
 
-
 @app.route('/api/settings_<tab>', methods=['GET', 'POST'])
 def handle_settings(tab):
     if request.method == 'GET':
@@ -100,7 +112,6 @@ def handle_settings(tab):
             "fps": 30,
             "name": f"default_{tab}"
         }))
-
     elif request.method == 'POST':
         data = request.get_json()
         required_fields = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'fps', 'name']
@@ -112,12 +123,10 @@ def handle_settings(tab):
         print(f"Saved settings for tab '{tab}': {data}")
         return jsonify({"status": "success"}), 200
 
-
 @app.route('/api/mode', methods=['GET', 'POST'])
 def handle_mode():
     if request.method == 'GET':
         return jsonify(mode_store)
-
     elif request.method == 'POST':
         data = request.get_json()
         if not data or 'mode' not in data or 'camera_id' not in data:
@@ -128,6 +137,6 @@ def handle_mode():
         print(f"Updated mode: {mode_store}")
         return jsonify({"status": "success"}), 200
 
-
 if __name__ == '__main__':
-    app.run(host='localhost', port=5800, debug=True)
+    print("Starting server on http://localhost:5800")
+    serve(app, host='localhost', port=5800)
