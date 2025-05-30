@@ -1,5 +1,7 @@
 import random
-from flask import Flask, Response, jsonify, request
+import os
+from pathlib import Path
+from flask import Flask, Response, jsonify, request, send_file
 from flask_cors import CORS
 from waitress import serve
 import threading
@@ -22,12 +24,11 @@ def camera_reader():
             ret, buffer = cv2.imencode('.jpg', frame)
             with frame_lock:
                 latest_frame = buffer.tobytes()
-        time.sleep(1 / 30)  # Limit to ~30 FPS
+        time.sleep(1 / 30)  # ~30 FPS
 
-# Start camera reading thread
 threading.Thread(target=camera_reader, daemon=True).start()
 
-# In-memory data stores
+# In-memory stores
 settings_store = {}
 mode_store = {
     "mode": "Detection",
@@ -35,6 +36,19 @@ mode_store = {
 }
 calibration_settings_store = {}
 
+# Snapshot storage
+SNAPSHOT_DIR = Path("snapshots")
+SNAPSHOT_DIR.mkdir(exist_ok=True)
+
+def get_snapshot_path(index: int) -> Path:
+    return SNAPSHOT_DIR / f"snapshot_{index}.jpg"
+
+def list_snapshot_indices() -> list[int]:
+    return sorted([
+        int(f.stem.split('_')[1])
+        for f in SNAPSHOT_DIR.glob("snapshot_*.jpg")
+        if f.stem.split('_')[1].isdigit()
+    ])
 
 @app.route('/api/stream_0')
 def stream_0():
@@ -142,7 +156,6 @@ def handle_mode():
 @app.route('/api/calibration_settings', methods=['POST'])
 def calibration_settings():
     data = request.get_json()
-
     required_fields = ['rows', 'columns', 'sideLength', 'imageSize']
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required calibration fields"}), 400
@@ -151,7 +164,6 @@ def calibration_settings():
     if not isinstance(image_size, dict) or 'width' not in image_size or 'height' not in image_size:
         return jsonify({"error": "Invalid imageSize format"}), 400
 
-    # Save to dedicated calibration settings store
     calibration_settings_store.clear()
     calibration_settings_store.update({
         'rows': data['rows'],
@@ -166,13 +178,61 @@ def calibration_settings():
     print(f"Calibration settings received: {calibration_settings_store}")
     return jsonify({"status": "success"}), 200
 
-
 @app.route('/api/calibration_settings', methods=['GET'])
 def get_calibration_settings():
     if not calibration_settings_store:
         return jsonify({"error": "No calibration settings found"}), 404
     return jsonify(calibration_settings_store)
 
+@app.route('/api/calibration/snapshot_<int:index>')
+def serve_snapshot(index):
+    file_path = get_snapshot_path(index)
+    if not file_path.exists():
+        return jsonify({"error": "Snapshot not found"}), 404
+    return send_file(file_path, mimetype="image/jpeg")
+
+@app.route('/api/calibration/operation', methods=['POST'])
+def handle_calibration_operation():
+    data = request.get_json()
+    if not data or 'operation' not in data:
+        return jsonify({"error": "Missing 'operation' field"}), 400
+
+    operation = data['operation']
+
+    if operation == "Snapshot":
+        with frame_lock:
+            if latest_frame is None:
+                return jsonify({"error": "No frame available"}), 500
+            image_data = latest_frame
+
+        indices = list_snapshot_indices()
+        next_index = (max(indices) + 1) if indices else 0
+        file_path = get_snapshot_path(next_index)
+        with open(file_path, "wb") as f:
+            f.write(image_data)
+        print(f"Saved snapshot at index {next_index}")
+        return jsonify({"status": "success", "index": next_index}), 200
+
+    elif operation == "Delete":
+        if 'index' not in data:
+            return jsonify({"error": "Missing 'index' for delete operation"}), 400
+        index = data['index']
+        file_path = get_snapshot_path(index)
+        if file_path.exists():
+            os.remove(file_path)
+            print(f"Deleted snapshot at index {index}")
+            return jsonify({"status": "success"}), 200
+        else:
+            return jsonify({"error": f"Snapshot {index} not found"}), 404
+
+    elif operation == "Calibration":
+        for f in SNAPSHOT_DIR.glob("snapshot_*.jpg"):
+            f.unlink()
+        print("Deleted all calibration snapshots")
+        return jsonify({"status": "success"}), 200
+
+    else:
+        return jsonify({"error": f"Unknown operation '{operation}'"}), 400
 
 if __name__ == '__main__':
     print("Starting server on http://localhost:5800")
