@@ -50,15 +50,15 @@ const CameraList: React.FC<CameraListProps> = ({ setOpen }) => {
 
   return (
     <Box sx={{ width: "100%", p: 1 }}>
-      {device.cameras.map((_camera, index) => (
+      {device.cameras.map((camera, index) => (
         <Button
           key={`${device.ip}-camera-${index}`}
-          onClick={() => handleCameraClick(index)}
+          onClick={() => handleCameraClick(camera.camera_id)}
           variant={tab === index ? "contained" : "outlined"}
           fullWidth
           sx={{ mb: 1, textAlign: "left" }}
         >
-          Camera {index + 1}
+          Camera {camera.camera_id}
         </Button>
       ))}
     </Box>

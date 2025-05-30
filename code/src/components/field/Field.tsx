@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { draw } from "./CanvasUtil";
 import backgroundImageSrc from "../../assets/field_2025.png";
 import FieldContainer from "./Container";
-import { aspectRatio as ASPECT_RATIO } from "./Constants";
+import { aspectRatio as ASPECT_RATIO } from "./constants.ts";
 import usePeriodicFetch from "../../hooks/usePeriodicFetch";
 import { FusedData } from "../../types/inputs";
 import { UNKNOWN } from "../../types/Constants";

@@ -1,5 +1,5 @@
 import { Robot, SafePose3d } from "../../types/inputs";
-import { FIELD_HEIGHT, FIELD_WIDTH } from "./Constants"
+import { FIELD_HEIGHT, FIELD_WIDTH } from "./constants"
 const drawRotatedRectangle = (
   ctx: CanvasRenderingContext2D,
   x: number,

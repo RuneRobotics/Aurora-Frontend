@@ -33,6 +33,8 @@ mode_store = {
     "mode": "Detection",
     "camera_id": -1
 }
+calibration_settings_store = {}
+
 
 @app.route('/api/stream_0')
 def stream_0():
@@ -136,6 +138,41 @@ def handle_mode():
         mode_store['camera_id'] = data['camera_id']
         print(f"Updated mode: {mode_store}")
         return jsonify({"status": "success"}), 200
+
+@app.route('/api/calibration_settings', methods=['POST'])
+def calibration_settings():
+    data = request.get_json()
+
+    required_fields = ['rows', 'columns', 'sideLength', 'imageSize']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing required calibration fields"}), 400
+
+    image_size = data['imageSize']
+    if not isinstance(image_size, dict) or 'width' not in image_size or 'height' not in image_size:
+        return jsonify({"error": "Invalid imageSize format"}), 400
+
+    # Save to dedicated calibration settings store
+    calibration_settings_store.clear()
+    calibration_settings_store.update({
+        'rows': data['rows'],
+        'columns': data['columns'],
+        'sideLength': data['sideLength'],
+        'imageSize': {
+            'width': image_size['width'],
+            'height': image_size['height']
+        }
+    })
+
+    print(f"Calibration settings received: {calibration_settings_store}")
+    return jsonify({"status": "success"}), 200
+
+
+@app.route('/api/calibration_settings', methods=['GET'])
+def get_calibration_settings():
+    if not calibration_settings_store:
+        return jsonify({"error": "No calibration settings found"}), 404
+    return jsonify(calibration_settings_store)
+
 
 if __name__ == '__main__':
     print("Starting server on http://localhost:5800")
