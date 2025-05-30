@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import NumericInput from './NumericInput';
+import NumericInput from '../../NumericInput';
 
 interface PreCalibrationProps {
   onContinue: () => void;

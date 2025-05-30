@@ -10,8 +10,8 @@ import {
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CameraList from "./CameraList";
 import { useSelector } from "react-redux";
-import { StoreState } from "../store";
-import { Mode } from "../types/state_types";
+import { StoreState } from "../../store";
+import { Mode } from "../../types/state_types";
 
 interface Props {
   open: boolean;

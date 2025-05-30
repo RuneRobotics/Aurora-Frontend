@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Grid, TextField } from '@mui/material';
-import NumericInput from './NumericInput';
+import NumericInput from '../../NumericInput';
 import { useSelector } from 'react-redux';
-import { StoreState } from '../store';
+import { StoreState } from '../../../store';
 
 const Settings: React.FC = () => {
   const tab = useSelector((state: StoreState) => state.general_slice.tab);

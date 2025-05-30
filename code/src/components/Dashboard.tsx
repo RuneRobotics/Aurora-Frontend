@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography, Grid } from "@mui/material";
 import Header from "./Header";
-import MyDrawer from "./MyDrawer";
+import MyDrawer from "./drawer/MyDrawer";
 import { useDeviceFetching } from "../hooks/useDeviceFetching";
-import Panel from "./Panel";
+import Panel from "./panel/Panel";
 import View from "./View";
 import { useModeFetching } from "../hooks/useModeFetching";
 

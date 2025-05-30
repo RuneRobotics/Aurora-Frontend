@@ -5,9 +5,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
-import { StoreState } from "../store";
-import { UN_DEFINED_IP } from "../types/Constants";
-import { Mode } from "../types/state_types";
+import { StoreState } from "../../store";
+import { UN_DEFINED_IP } from "../../types/Constants";
+import { Mode } from "../../types/state_types";
 
 interface CameraListProps {
   setOpen: (open: boolean) => void;

@@ -3,11 +3,11 @@ import React from 'react';
 import {Paper } from '@mui/material';
 import SelectMode from './ModeSelector';
 import { useSelector } from 'react-redux';
-import { StoreState } from '../store';
-import Settings from './Settings';
-import { Mode } from '../types/state_types';
-import Lighting from './Lighting';
-import Calibration from './Calibration';
+import { StoreState } from '../../store';
+import Settings from './settings/Settings';
+import { Mode } from '../../types/state_types';
+import Lighting from './lighting/Lighting';
+import Calibration from './calibration/Calibration';
 
 
 

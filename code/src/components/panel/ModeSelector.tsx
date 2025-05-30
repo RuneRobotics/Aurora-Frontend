@@ -1,9 +1,9 @@
 // SelectMode.tsx
 import React from "react";
 import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
-import { Mode } from "../types/state_types";
+import { Mode } from "../../types/state_types";
 import { useSelector } from "react-redux";
-import { StoreState } from "../store";
+import { StoreState } from "../../store";
 
 const modes: Mode[] = Object.values(Mode) as Mode[];
 
