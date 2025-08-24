@@ -11,7 +11,7 @@ export const useModeFetching = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5800/api/mode");
+        const response = await fetch("http://10.67.38.10:5800/api/mode");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
